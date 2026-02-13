@@ -16,7 +16,30 @@ def check_connection(cursor):
     print("Server version:", result)
 
 def run_test(cursor, query):
+    if query == "\n\n":
+        return
     cursor.execute(query)
+    for row in cursor:
+        print(row)
+
+def get_types(cursor):
+    run_test(cursor, """
+    SELECT column_name, data_type
+    FROM information_schema.columns
+    WHERE table_name = 'DBAVl_archIEC104_6_JKA20CE01_XQ01'     
+""")
+
+def get_data(cursor):
+    cursor.execute(
+        "SELECT * FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';")
+    for row in cursor:
+        print(row)
+
+def get_data_short(cursor):
+    cursor.execute(
+        "SELECT \"TM\",\"VAL\" FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';")
+    columns = [desc[0] for desc in cursor.description]
+    print(columns)
     for row in cursor:
         print(row)
 
@@ -36,25 +59,26 @@ def main():
 
         check_connection(cursor)
         # get_all_channels(cursor)
+        get_types(cursor)
+        # get_data(cursor)
+        get_data_short(cursor)
 
 #######################################################
         run_test(cursor, """
-            SELECT table_name
-            FROM information_schema.tables
+
 """)
 #######################################################
-        cursor.execute(
-            "SELECT * FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';")
-        for row in cursor:
-            print(row)
 
     except Exception as error:
-        print("Ошибка подключения:", error)
+        print(error)
 
     finally:
         if connection:
             cursor.close()
             connection.close()
+
+
+
 
 
 main()
