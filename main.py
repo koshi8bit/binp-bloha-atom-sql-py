@@ -16,6 +16,7 @@ def check_connection(cursor):
     print("Server version:", result)
 
 def run_test(cursor, query):
+    print(query)
     if query == "\n\n":
         return
     cursor.execute(query)
@@ -30,13 +31,15 @@ def get_types(cursor):
 """)
 
 def get_data(cursor):
-    cursor.execute(
-        "SELECT * FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';")
+    t = "SELECT * FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';"
+    print(t)
+    cursor.execute(t)
     for row in cursor:
         print(row)
 
 def get_data_short(cursor):
     t = "SELECT \"TM\",\"VAL\" FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';"
+    # SELECT "TM","VAL" FROM "DBAVl_archIEC104_6_JKA20CE01_XQ01" WHERE "TM">'2026-02-06 04:03:04+03' AND "TM"<'2026-02-07 12:03:04+03';
     print(t)
     cursor.execute(t)
     columns = [desc[0] for desc in cursor.description]
@@ -49,7 +52,7 @@ def main():
     try:
         # Подключение к серверу
         connection = psycopg2.connect(
-            host="192.168.1.2",
+            host="192.168.1.1",
             database="ArchRNF",
             user="binp",
             password="binp",
@@ -62,11 +65,11 @@ def main():
         # get_all_channels(cursor)
         get_types(cursor)
         # get_data(cursor)
-        get_data_short(cursor)
+        # get_data_short(cursor)
 
 #######################################################
         run_test(cursor, """
-
+SELECT \"TM\",\"VAL\" FROM "DBAVl_archIEC104_2_MAJ30CP01_XQ01" WHERE "TM">'2026-03-11 09:03:04+03' AND "TM"<'2026-03-11 23:03:04+03';    
 """)
 #######################################################
 

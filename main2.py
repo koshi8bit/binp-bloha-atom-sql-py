@@ -16,33 +16,21 @@ def check_connection(cursor):
     print("Server version:", result)
 
 def run_test(cursor, query):
+    print(query)
     if query == "\n\n":
         return
     cursor.execute(query)
     for row in cursor:
         print(row)
 
-def get_types(cursor):
-    run_test(cursor, """
-    SELECT column_name, data_type
-    FROM information_schema.columns
-    WHERE table_name = 'DBAVl_archIEC104_6_JKA20CE01_XQ01'     
-""")
-
-def get_data(cursor):
-    cursor.execute(
-        "SELECT * FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';")
+def get_names(cursor):
+    query = "SELECT * FROM \"Archive_val\""
+    print(query)
+    if query == "\n\n":
+        return
+    cursor.execute(query)
     for row in cursor:
         print(row)
-
-def get_data_short(cursor):
-    cursor.execute(
-        "SELECT \"TM\",\"VAL\" FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';")
-    columns = [desc[0] for desc in cursor.description]
-    print(columns)
-    for row in cursor:
-        print(row)
-
 
 def main():
     try:
@@ -56,10 +44,11 @@ def main():
         )
 
         cursor = connection.cursor()
-        run_test(cursor, """
-                    SELECT *
-                    FROM "Archive_val"
-        """)
+        get_names(cursor)
+        # run_test(cursor, """
+        #             SELECT *
+        #             FROM "Archive_val"
+        # """)
 
         # check_connection(cursor)
         # get_all_channels(cursor)
@@ -68,10 +57,9 @@ def main():
         # get_data_short(cursor)
 
 #######################################################
-        run_test(cursor, """
-            SELECT *
-            FROM "Archive_val"
-""")
+#         run_test(cursor, """
+#             SELECT * FROM "DBAVl_archIEC104_6_MAJ10AP02_XG01" WHERE "TM">'2026-02-06 04:03:04+03' AND "TM"<'2026-02-07 12:03:04+03';
+# """)
 #######################################################
 
     except Exception as error:
@@ -81,9 +69,5 @@ def main():
         if connection:
             cursor.close()
             connection.close()
-
-
-
-
 
 main()
