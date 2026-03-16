@@ -24,24 +24,22 @@ def get_types(cursor):
     WHERE table_name = 'DBAVl_archIEC104_6_JKA20CE01_XQ01'     
 """)
 
-def get_data(cursor):
-    t = "SELECT * FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';"
-    print(t)
-    cursor.execute(t)
-    for row in cursor:
-        print(row)
+def run_test(cursor, query):
+    print("\n")
+    print(query)
+    if query == "\n\n":
+        print("empty query")
+        return
 
-def get_data_short(cursor):
-    t = "SELECT \"TM\",\"VAL\" FROM \"DBAVl_archIEC104_6_JKA20CE01_XQ01\" WHERE \"TM\">'2026-02-06 04:03:04+03' AND \"TM\"<'2026-02-07 12:03:04+03';"
-    # SELECT "TM","VAL" FROM "DBAVl_archIEC104_6_JKA20CE01_XQ01" WHERE "TM">'2026-02-06 04:03:04+03' AND "TM"<'2026-02-07 12:03:04+03';
-    print(t)
-    cursor.execute(t)
+    cursor.execute(query)
     columns = [desc[0] for desc in cursor.description]
     print(columns)
+
     for row in cursor:
         print(row)
 
-def run_test(cursor, query, width=10, precision=3):
+
+def get_values(cursor, query, width=10, precision=3):
     print("\n")
     print(query)
     if query == "\n\n":
@@ -55,28 +53,29 @@ def run_test(cursor, query, width=10, precision=3):
     str_to_clipboard = f"{query}\n"
     threshold = 1_000_000
     for row in cursor:
-        val = row[1]
+        val = row[2]
+        time_dt = row[0].replace(microsecond=row[1], tzinfo=None)
         f = 'f' if -threshold < val < threshold else 'e'
-        tmp_str = f"{row[0].isoformat(timespec="milliseconds")} {val:{width}.{precision}{f}}"
+        tmp_str = f"{time_dt.isoformat(timespec="milliseconds")} {val:{width}.{precision}{f}}"
         str_to_clipboard = str_to_clipboard + tmp_str + "\n"
         print(tmp_str)
     pyperclip.copy(str_to_clipboard)
 
 
 
-def get_today_data(cursor, kks, width=10, precision=3,
-                   time_begin=datetime.time(hour=0, minute=0, second=0, microsecond=0),
-                   time_end=datetime.time(hour=23, minute=59, second=59, microsecond=999)):
+def get_data(cursor, kks, width=10, precision=3,
+             date=datetime.datetime.now().date(),
+             time_begin=datetime.time(hour=0, minute=0, second=0, microsecond=0),
+             time_end=datetime.time(hour=23, minute=59, second=59, microsecond=999)):
 
-    now = datetime.datetime.now()
-    begin = (now.replace(
-        hour=time_begin.hour, minute=time_begin.minute, second=time_begin.second, microsecond=time_begin.microsecond)
-        .strftime("%Y-%m-%d %H:%M:%S+03"))
-    end = (now.replace(
+    dt = datetime.datetime.combine(date, time_begin)
+
+    begin = dt.strftime("%Y-%m-%d %H:%M:%S+03")
+    end = (dt.replace(
         hour=time_end.hour, minute=time_end.minute, second=time_end.second, microsecond=time_end.microsecond)
         .strftime("%Y-%m-%d %H:%M:%S+03"))
 
-    run_test(cursor, f"""SELECT \"TM\",\"VAL\" FROM "{kks}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
+    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\" FROM "{kks}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
 
 
 def main():
@@ -93,17 +92,16 @@ def main():
         cursor = connection.cursor()
 
         check_connection(cursor)
-        get_all_channels(cursor)
+        # get_all_channels(cursor)
         # get_types(cursor)
-        # get_data(cursor)
-        # get_data_short(cursor)
-        get_today_data(cursor, "DBAVl_archIEC104_6_MAG01CE01_XQ01", 12, 1,
-                       # time_begin=datetime.time(hour=12, minute=46, second=40, microsecond=0),
-                       # time_end=datetime.time(hour=12, minute=47, second=0, microsecond=0)
-        )
+        get_data(cursor, "DBAVl_archIEC104_6_MAG01GW11_XG01", 12, 0,
+                 # date=datetime.date(year=2026, month=3, day=15),
+                 # time_begin=datetime.time(hour=12, minute=46, second=40, microsecond=0),
+                 # time_end=datetime.time(hour=12, minute=47, second=0, microsecond=0)
+                 )
 ######################################################
 #         run_test(cursor, f"""
-# SELECT \"TM\",\"VAL\" FROM "DBAVl_archIEC104_2_MAJ30CP01_XQ01" WHERE "TM">'2026-03-11 09:03:04+03' AND "TM"<'2026-03-11 23:03:04+03';
+# SELECT * FROM "DBAVl_archIEC104_6_MAG01GW11_XG01" WHERE "TM">'2026-03-16 00:00:00+03' AND "TM"<'2026-03-16 23:59:59+03';
 # """)
 ######################################################
 
@@ -114,9 +112,5 @@ def main():
         if connection:
             cursor.close()
             connection.close()
-
-
-
-
 
 main()
