@@ -1,6 +1,7 @@
 import psycopg2
 import datetime
 import pyperclip
+from kks import kks_to_sql
 
 def get_all_channels(cursor):
     cursor.execute("""
@@ -9,7 +10,7 @@ def get_all_channels(cursor):
             WHERE table_name LIKE 'DBAVl_archIEC104%';
         """)
     for row in cursor:
-        print(row)
+        print(row[0])
 
 
 def check_connection(cursor):
@@ -64,7 +65,7 @@ def get_values(cursor, query, width=10, precision=3):
 
 
 
-def get_data(cursor, kks, width=10, precision=3,
+def get_data(cursor, kks_sql, width=10, precision=3,
              date=datetime.datetime.now().date(),
              time_begin=datetime.time(hour=0, minute=0, second=0, microsecond=0),
              time_end=datetime.time(hour=23, minute=59, second=59, microsecond=999)):
@@ -76,7 +77,7 @@ def get_data(cursor, kks, width=10, precision=3,
         hour=time_end.hour, minute=time_end.minute, second=time_end.second, microsecond=time_end.microsecond)
         .strftime("%Y-%m-%d %H:%M:%S+03"))
 
-    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\" FROM "{kks}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
+    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
 
 
 def main():
@@ -95,7 +96,7 @@ def main():
         check_connection(cursor)
         # get_all_channels(cursor)
         # get_types(cursor)
-        get_data(cursor, "DBAVl_archIEC104_6_MAG01GW11_XG01", 12, 0,
+        get_data(cursor, kks_to_sql("MAG01CE01_XQ"), 12, 1,
                  # date=datetime.date(year=2026, month=3, day=15),
                  # time_begin=datetime.time(hour=12, minute=46, second=40, microsecond=0),
                  # time_end=datetime.time(hour=12, minute=47, second=0, microsecond=0)
@@ -113,5 +114,6 @@ def main():
         if connection:
             cursor.close()
             connection.close()
+
 
 main()
