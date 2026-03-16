@@ -56,9 +56,10 @@ def get_values(cursor, query, width=10, precision=3):
     for row in cursor:
         val = row[2]
         time_dt = row[0].replace(microsecond=row[1])
+        alarm = "(!)" if row[0]==1 else ""
         f = 'f' if -threshold < val < threshold else 'e'
         # tmp_str = f"{time_dt.isoformat(timespec="milliseconds")} {val:{width}.{precision}{f}}"
-        tmp_str = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]} {val:{width}.{precision}{f}}"
+        tmp_str = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]} {val:{width}.{precision}{f}} {alarm}"
         str_to_clipboard = str_to_clipboard + tmp_str + "\n"
         print(tmp_str)
     pyperclip.copy(str_to_clipboard)
@@ -66,18 +67,15 @@ def get_values(cursor, query, width=10, precision=3):
 
 
 def get_data(cursor, kks_sql, width=10, precision=3,
-             date=datetime.datetime.now().date(),
+             date_begin=datetime.datetime.now().date(),
+             date_end=datetime.datetime.now().date(),
              time_begin=datetime.time(hour=0, minute=0, second=0, microsecond=0),
              time_end=datetime.time(hour=23, minute=59, second=59, microsecond=999)):
 
-    dt = datetime.datetime.combine(date, time_begin)
+    begin = datetime.datetime.combine(date_begin, time_begin).strftime("%Y-%m-%d %H:%M:%S+03")
+    end = datetime.datetime.combine(date_end, time_end).strftime("%Y-%m-%d %H:%M:%S+03")
 
-    begin = dt.strftime("%Y-%m-%d %H:%M:%S+03")
-    end = (dt.replace(
-        hour=time_end.hour, minute=time_end.minute, second=time_end.second, microsecond=time_end.microsecond)
-        .strftime("%Y-%m-%d %H:%M:%S+03"))
-
-    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
+    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
 
 
 def main():
@@ -95,11 +93,12 @@ def main():
 
         check_connection(cursor)
         # get_all_channels(cursor)
-        # get_types(cursor)
+        get_types(cursor)
         get_data(cursor, kks_to_sql("MAG01CE01_XQ"), 12, 1,
-                 # date=datetime.date(year=2026, month=3, day=15),
+                 # date_begin=datetime.date(year=2026, month=3, day=15),
+                 # date_end=datetime.date(year=2026, month=3, day=15),
                  # time_begin=datetime.time(hour=12, minute=46, second=40, microsecond=0),
-                 # time_end=datetime.time(hour=12, minute=47, second=0, microsecond=0)
+                 # time_end=datetime.time(hour=12, minute=47, second=0, microsecond=0),
                  )
 ######################################################
 #         run_test(cursor, f"""
