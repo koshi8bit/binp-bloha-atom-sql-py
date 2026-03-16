@@ -1,4 +1,5 @@
 import psycopg2
+import datetime
 
 
 def get_all_channels(cursor):
@@ -47,12 +48,21 @@ def get_data_short(cursor):
     for row in cursor:
         print(row)
 
+def get_today_data(cursor, kks):
+    begin = (datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+             .strftime("%Y-%m-%d %H:%M:%S+03"))
+    end = (datetime.datetime.now().replace(hour=23, minute=59, second=59, microsecond=999)
+           .strftime("%Y-%m-%d %H:%M:%S+03"))
+    run_test(cursor, f"""
+    SELECT \"TM\",\"VAL\" FROM "{kks}" WHERE "TM">'{begin}' AND "TM"<'{end}';    
+    """)
+
 
 def main():
     try:
         # Подключение к серверу
         connection = psycopg2.connect(
-            host="192.168.1.1",
+            host="192.168.1.2",
             database="ArchRNF",
             user="binp",
             password="binp",
@@ -62,16 +72,16 @@ def main():
         cursor = connection.cursor()
 
         check_connection(cursor)
-        # get_all_channels(cursor)
-        get_types(cursor)
+        get_all_channels(cursor)
+        # get_types(cursor)
         # get_data(cursor)
         # get_data_short(cursor)
-
-#######################################################
-        run_test(cursor, """
-SELECT \"TM\",\"VAL\" FROM "DBAVl_archIEC104_2_MAJ30CP01_XQ01" WHERE "TM">'2026-03-11 09:03:04+03' AND "TM"<'2026-03-11 23:03:04+03';    
-""")
-#######################################################
+        get_today_data(cursor, "DBAVl_archIEC104_6_MAG01CE01_XQ01")
+######################################################
+#         run_test(cursor, f"""
+# SELECT \"TM\",\"VAL\" FROM "DBAVl_archIEC104_2_MAJ30CP01_XQ01" WHERE "TM">'2026-03-11 09:03:04+03' AND "TM"<'2026-03-11 23:03:04+03';
+# """)
+######################################################
 
     except Exception as error:
         print(error)
