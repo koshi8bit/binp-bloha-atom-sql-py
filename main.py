@@ -1,6 +1,6 @@
 import psycopg2
 import datetime
-
+import pyperclip
 
 def get_all_channels(cursor):
     cursor.execute("""
@@ -52,15 +52,30 @@ def run_test(cursor, query, width=10, precision=3):
 
     # for row in cursor:
     #     print(row)
+    str_to_clipboard = f"{query}\n"
+    threshold = 1_000_000
     for row in cursor:
-        print(row[0].isoformat(timespec="milliseconds"), f"{row[1]:{width}.{precision}f}")
+        val = row[1]
+        f = 'f' if -threshold < val < threshold else 'e'
+        tmp_str = f"{row[0].isoformat(timespec="milliseconds")} {val:{width}.{precision}{f}}"
+        str_to_clipboard = str_to_clipboard + tmp_str + "\n"
+        print(tmp_str)
+    pyperclip.copy(str_to_clipboard)
 
 
-def get_today_data(cursor, kks, width=10, precision=3):
-    begin = (datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-             .strftime("%Y-%m-%d %H:%M:%S+03"))
-    end = (datetime.datetime.now().replace(hour=23, minute=59, second=59, microsecond=999)
-           .strftime("%Y-%m-%d %H:%M:%S+03"))
+
+def get_today_data(cursor, kks, width=10, precision=3,
+                   time_begin=datetime.time(hour=0, minute=0, second=0, microsecond=0),
+                   time_end=datetime.time(hour=23, minute=59, second=59, microsecond=999)):
+
+    now = datetime.datetime.now()
+    begin = (now.replace(
+        hour=time_begin.hour, minute=time_begin.minute, second=time_begin.second, microsecond=time_begin.microsecond)
+        .strftime("%Y-%m-%d %H:%M:%S+03"))
+    end = (now.replace(
+        hour=time_end.hour, minute=time_end.minute, second=time_end.second, microsecond=time_end.microsecond)
+        .strftime("%Y-%m-%d %H:%M:%S+03"))
+
     run_test(cursor, f"""SELECT \"TM\",\"VAL\" FROM "{kks}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision)
 
 
@@ -82,7 +97,10 @@ def main():
         # get_types(cursor)
         # get_data(cursor)
         # get_data_short(cursor)
-        get_today_data(cursor, "DBAVl_archIEC104_6_MAG01CE01_XQ01", 10, 2)
+        get_today_data(cursor, "DBAVl_archIEC104_6_MAG01CE01_XQ01", 12, 1,
+                       # time_begin=datetime.time(hour=12, minute=46, second=40, microsecond=0),
+                       # time_end=datetime.time(hour=12, minute=47, second=0, microsecond=0)
+        )
 ######################################################
 #         run_test(cursor, f"""
 # SELECT \"TM\",\"VAL\" FROM "DBAVl_archIEC104_2_MAJ30CP01_XQ01" WHERE "TM">'2026-03-11 09:03:04+03' AND "TM"<'2026-03-11 23:03:04+03';
