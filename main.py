@@ -54,9 +54,10 @@ def get_values(cursor, query, width=10, precision=3):
     threshold = 1_000_000
     for row in cursor:
         val = row[2]
-        time_dt = row[0].replace(microsecond=row[1], tzinfo=None)
+        time_dt = row[0].replace(microsecond=row[1])
         f = 'f' if -threshold < val < threshold else 'e'
-        tmp_str = f"{time_dt.isoformat(timespec="milliseconds")} {val:{width}.{precision}{f}}"
+        # tmp_str = f"{time_dt.isoformat(timespec="milliseconds")} {val:{width}.{precision}{f}}"
+        tmp_str = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]} {val:{width}.{precision}{f}}"
         str_to_clipboard = str_to_clipboard + tmp_str + "\n"
         print(tmp_str)
     pyperclip.copy(str_to_clipboard)
