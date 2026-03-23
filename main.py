@@ -1,6 +1,8 @@
 import psycopg2
 import datetime
 import pyperclip
+from psycopg2._psycopg import cursor
+
 from kks import kks_to_sql
 
 def get_all_channels(cursor):
@@ -79,10 +81,10 @@ def get_data(cursor, kks_sql, width=10, precision=3,
     get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision, callback)
 
 
-def parce_paramerus_status2(s: str, index, message):
+def parce_bit(s: str, index, message_if_true):
     if not len(s) > index:
         return ""
-    return f"{message}({index}); " if s[index]=="1" else ""
+    return f"{message_if_true}({index}); " if s[index]=="1" else ""
 
 
 def parce_paramerus_status(val):
@@ -93,29 +95,40 @@ def parce_paramerus_status(val):
 
     b = b[::-1]
 
-    # result = result + parce_paramerus_status2(b, 1, "remote")
-    # result = result + parce_paramerus_status2(b, 8, "no err red box")
-    # result = result + parce_paramerus_status2(b, 15, "polar")
+    # result = result + parce_bit(b, 1, "remote")
+    # result = result + parce_bit(b, 8, "no err red box")
+    # result = result + parce_bit(b, 15, "polar")
+
+    # if val == 33026.0:
+    #     return result + "ok(1,8,15)"
 
 
-    result = result + parce_paramerus_status2(b, 0, "CC")
+    result = result + parce_bit(b, 0, "CC")
 
-    result = result + parce_paramerus_status2(b, 2, "err")
-    result = result + parce_paramerus_status2(b, 3, "set=get OK")
-    result = result + parce_paramerus_status2(b, 4, "over U")
-    result = result + parce_paramerus_status2(b, 5, "over I")
-    result = result + parce_paramerus_status2(b, 6, "over T")
-    result = result + parce_paramerus_status2(b, 7, "CV")
+    result = result + parce_bit(b, 2, "err")
+    result = result + parce_bit(b, 3, "set=get OK")
+    result = result + parce_bit(b, 4, "over U")
+    result = result + parce_bit(b, 5, "over I")
+    result = result + parce_bit(b, 6, "over T")
+    result = result + parce_bit(b, 7, "CV")
 
-    result = result + parce_paramerus_status2(b, 9, "arc")
-    result = result + parce_paramerus_status2(b, 10, "AC in")
-    result = result + parce_paramerus_status2(b, 11, "short circuit")
-    result = result + parce_paramerus_status2(b, 12, "HV ON")
-    result = result + parce_paramerus_status2(b, 13, "EEPROM ok")
-    result = result + parce_paramerus_status2(b, 14, "EEPROM err")
+    result = result + parce_bit(b, 9, "arc")
+    result = result + parce_bit(b, 10, "AC in")
+    result = result + parce_bit(b, 11, "short circuit")
+    result = result + parce_bit(b, 12, "HV ON")
+    result = result + parce_bit(b, 13, "EEPROM ok")
+    result = result + parce_bit(b, 14, "EEPROM err")
 
     return result
 
+def get_paramerus_status(cursor):
+    get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 0,
+             # date_begin=datetime.date(year=2026, month=3, day=22),
+             # date_end=datetime.date(year=2026, month=3, day=22),
+             # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
+             # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
+             callback=parce_paramerus_status,
+             )
 
 def main():
     # Подключение к серверу
@@ -132,13 +145,15 @@ def main():
     check_connection(cursor)
     # get_all_channels(cursor)
     # get_types(cursor)
-    get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 3,
-             # date_begin=datetime.date(year=2026, month=3, day=22),
-             # date_end=datetime.date(year=2026, month=3, day=22),
-             # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
-             # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
-             callback=parce_paramerus_status,
-             )
+    get_paramerus_status(cursor)
+
+    # get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 3,
+    #          # date_begin=datetime.date(year=2026, month=3, day=22),
+    #          # date_end=datetime.date(year=2026, month=3, day=22),
+    #          # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
+    #          # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
+    #          # callback=parce_paramerus_status,
+    #          )
 #####################################################
 #         get_values(cursor, f"""
 # SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_1_HVC20CE01_XQ01" WHERE "TM">'2026-03-21 14:30:40+03' AND "TM"<'2026-03-21 23:59:59+03' AND "VAL">2 AND "VAL"<3
@@ -152,6 +167,5 @@ def main():
     if connection:
         cursor.close()
         connection.close()
-
 
 main()
