@@ -81,45 +81,48 @@ def get_data(cursor, kks_sql, width=10, precision=3,
     get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision, callback)
 
 
-def parce_bit(s: str, index, message_if_true, message_if_false=""):
-    if not len(s) > index:
+def parce_bit(bits, index, message_if_true="", message_if_false=""):
+    if not len(bits) > index:
         return ""
+
+    if message_if_true != "":
+        message_if_true = f"{message_if_true}({index}); "
+
     if message_if_false != "":
         message_if_false = f"{message_if_false}({index}); "
-    return f"{message_if_true}({index}); " if s[index]=="1" else message_if_false
+    return message_if_true if bits[index] else message_if_false
 
 
 def parce_paramerus_status(val):
-    if not 65536 >= val > 0:
+    if not 65535 > val > 0:
         return "ERR value"
-    b = bin(int(val))[2:]
-    result = str(b) + " "
+    bits = [int(b) for b in format(int(val), '016b')]
+    result = "".join(map(str, bits)) + " "
+    bits = bits[::-1]
 
-    b = b[::-1]
 
-    # result = result + parce_bit(b, 1, "remote")
-    # result = result + parce_bit(b, 8, "no err red box")
-    # result = result + parce_bit(b, 15, "polar")
+    # result = result + parce_bit(bits, 1, "remote")
+    # result = result + parce_bit(bits, 15, "polar")
 
     # if val == 33026.0:
     #     return result + "ok(1,8,15)"
 
 
-    result = result + parce_bit(b, 0, "CC")
+    result = result + parce_bit(bits, 0, "CC")
 
-    result = result + parce_bit(b, 2, "err")
-    result = result + parce_bit(b, 3, "set=get OK")
-    result = result + parce_bit(b, 4, "over U")
-    result = result + parce_bit(b, 5, "over I")
-    result = result + parce_bit(b, 6, "over T")
-    result = result + parce_bit(b, 7, "CV")
-
-    result = result + parce_bit(b, 9, "arc")
-    result = result + parce_bit(b, 10, "AC in")
-    result = result + parce_bit(b, 11, "short circuit")
-    result = result + parce_bit(b, 12, "HV ON")
-    result = result + parce_bit(b, 13, "EEPROM ok")
-    result = result + parce_bit(b, 14, "EEPROM err")
+    result = result + parce_bit(bits, 2, "err")
+    result = result + parce_bit(bits, 3, "set=get OK")
+    result = result + parce_bit(bits, 4, "over U")
+    result = result + parce_bit(bits, 5, "over I")
+    result = result + parce_bit(bits, 6, "over T")
+    result = result + parce_bit(bits, 7, "CV")
+    result = result + parce_bit(bits, 8, "", "err red box")
+    result = result + parce_bit(bits, 9, "arc")
+    result = result + parce_bit(bits, 10, "AC in")
+    result = result + parce_bit(bits, 11, "short circuit")
+    result = result + parce_bit(bits, 12, "HV ON")
+    result = result + parce_bit(bits, 13, "EEPROM ok")
+    result = result + parce_bit(bits, 14, "EEPROM err")
 
     return result
 
