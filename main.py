@@ -57,7 +57,7 @@ def get_values(cursor, query, width=10, precision=3, callback=None):
         val = row[2]
         time_dt = row[0].replace(microsecond=row[1])
         alarm = " (!)" if row[3]==1.0 else ""
-        callback_str = callback(val) if callback else ""
+        callback_str = f"     {callback(val)}" if callback else ""
         f = 'f' if -threshold < val < threshold else 'e'
         tmp_str = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]} {val:{width}.{precision}{f}}{alarm} {callback_str}"
         str_to_clipboard = str_to_clipboard + tmp_str + "\n"
@@ -79,46 +79,79 @@ def get_data(cursor, kks_sql, width=10, precision=3,
     get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision, callback)
 
 
+def parce_paramerus_status2(s: str, index, message):
+    if not len(s) > index:
+        return ""
+    return f"{message}({index}); " if s[index]=="1" else ""
+
+
 def parce_paramerus_status(val):
-    return str(val)
+    if not 65536 >= val > 0:
+        return "ERR value"
+    b = bin(int(val))[2:]
+    result = str(b) + " "
+
+    b = b[::-1]
+
+    # result = result + parce_paramerus_status2(b, 1, "remote")
+    # result = result + parce_paramerus_status2(b, 8, "no err red box")
+    # result = result + parce_paramerus_status2(b, 15, "polar")
+
+
+    result = result + parce_paramerus_status2(b, 0, "CC")
+
+    result = result + parce_paramerus_status2(b, 2, "err")
+    result = result + parce_paramerus_status2(b, 3, "set=get OK")
+    result = result + parce_paramerus_status2(b, 4, "over U")
+    result = result + parce_paramerus_status2(b, 5, "over I")
+    result = result + parce_paramerus_status2(b, 6, "over T")
+    result = result + parce_paramerus_status2(b, 7, "CV")
+
+    result = result + parce_paramerus_status2(b, 9, "arc")
+    result = result + parce_paramerus_status2(b, 10, "AC in")
+    result = result + parce_paramerus_status2(b, 11, "short circuit")
+    result = result + parce_paramerus_status2(b, 12, "HV ON")
+    result = result + parce_paramerus_status2(b, 13, "EEPROM ok")
+    result = result + parce_paramerus_status2(b, 14, "EEPROM err")
+
+    return result
 
 
 def main():
-    try:
-        # Подключение к серверу
-        connection = psycopg2.connect(
-            host="192.168.1.2",
-            database="ArchRNF",
-            user="binp",
-            password="binp",
-            port="5432"
-        )
+    # Подключение к серверу
+    connection = psycopg2.connect(
+        host="192.168.1.2",
+        database="ArchRNF",
+        user="binp",
+        password="binp",
+        port="5432"
+    )
 
-        cursor = connection.cursor()
+    cursor = connection.cursor()
 
-        check_connection(cursor)
-        # get_all_channels(cursor)
-        # get_types(cursor)
-        get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 0,
-                 # date_begin=datetime.date(year=2026, month=3, day=22),
-                 # date_end=datetime.date(year=2026, month=3, day=22),
-                 time_begin=datetime.time(hour=17, minute=45, second=00, microsecond=0),
-                 # time_end = datetime.time(hour=14, minute=28, second=00, microsecond=0),
-                 callback=parce_paramerus_status,
-                 )
+    check_connection(cursor)
+    # get_all_channels(cursor)
+    # get_types(cursor)
+    get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 3,
+             # date_begin=datetime.date(year=2026, month=3, day=22),
+             # date_end=datetime.date(year=2026, month=3, day=22),
+             # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
+             # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
+             callback=parce_paramerus_status,
+             )
 #####################################################
 #         get_values(cursor, f"""
 # SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_1_HVC20CE01_XQ01" WHERE "TM">'2026-03-21 14:30:40+03' AND "TM"<'2026-03-21 23:59:59+03' AND "VAL">2 AND "VAL"<3
 # """)
 ######################################################
 
-    except Exception as error:
-        print(error)
-
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
+    # except Exception as error:
+    #     print(error)
+    #
+    # finally:
+    if connection:
+        cursor.close()
+        connection.close()
 
 
 main()
