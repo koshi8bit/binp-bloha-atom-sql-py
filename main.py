@@ -81,10 +81,12 @@ def get_data(cursor, kks_sql, width=10, precision=3,
     get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision, callback)
 
 
-def parce_bit(s: str, index, message_if_true):
+def parce_bit(s: str, index, message_if_true, message_if_false=""):
     if not len(s) > index:
         return ""
-    return f"{message_if_true}({index}); " if s[index]=="1" else ""
+    if message_if_false != "":
+        message_if_false = f"{message_if_false}({index}); "
+    return f"{message_if_true}({index}); " if s[index]=="1" else message_if_false
 
 
 def parce_paramerus_status(val):
