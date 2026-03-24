@@ -100,16 +100,11 @@ def parce_paramerus_status(val):
     result = "".join(map(str, bits)) + " "
     bits = bits[::-1]
 
-
-    # result = result + parce_bit(bits, 1, "remote")
-    # result = result + parce_bit(bits, 15, "polar")
-
     # if val == 33026.0:
     #     return result + "ok(1,8,15)"
 
-
     result = result + parce_bit(bits, 0, "CC")
-
+    # result = result + parce_bit(bits, 1, "remote")
     result = result + parce_bit(bits, 2, "err")
     result = result + parce_bit(bits, 3, "set=get OK")
     result = result + parce_bit(bits, 4, "over U")
@@ -123,12 +118,13 @@ def parce_paramerus_status(val):
     result = result + parce_bit(bits, 12, "HV ON")
     result = result + parce_bit(bits, 13, "EEPROM ok")
     result = result + parce_bit(bits, 14, "EEPROM err")
+    # result = result + parce_bit(bits, 15, "polar")
 
     return result
 
 def get_paramerus_status(cursor):
     get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 0,
-             # date_begin=datetime.date(year=2026, month=3, day=22),
+             # date_begin=datetime.date(year=2026, month=3, day=23),
              # date_end=datetime.date(year=2026, month=3, day=22),
              # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
              # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
