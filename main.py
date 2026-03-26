@@ -111,7 +111,7 @@ def parce_paramerus_status(val):
     result = result + parce_bit(bits, 5, "over I")
     result = result + parce_bit(bits, 6, "over T")
     result = result + parce_bit(bits, 7, "CV")
-    result = result + parce_bit(bits, 8, "", "err red box")
+    result = result + parce_bit(bits, 8, "", "err in conn red box and ps")
     result = result + parce_bit(bits, 9, "arc")
     result = result + parce_bit(bits, 10, "AC in")
     result = result + parce_bit(bits, 11, "short circuit")
@@ -148,13 +148,14 @@ def main():
     # get_types(cursor)
     get_paramerus_status(cursor)
 
-    # get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 3,
-    #          # date_begin=datetime.date(year=2026, month=3, day=22),
-    #          # date_end=datetime.date(year=2026, month=3, day=22),
-    #          # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
-    #          # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
-    #          # callback=parce_paramerus_status,
-    #          )
+    get_data(cursor, kks_to_sql("LVC30GW11_XG01"), 12, 0,
+    # get_data(cursor, "DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
+    #          date_begin=datetime.date(year=2026, month=3, day=22),
+    #          date_end=datetime.date(year=2026, month=3, day=22),
+    #          time_begin=datetime.time(hour=14, minute=15, second=00, microsecond=0),
+    #          time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
+    #           callback=parce_paramerus_status,
+             )
 #####################################################
 #         get_values(cursor, f"""
 # SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_1_HVC20CE01_XQ01" WHERE "TM">'2026-03-21 14:30:40+03' AND "TM"<'2026-03-21 23:59:59+03' AND "VAL">2 AND "VAL"<3
