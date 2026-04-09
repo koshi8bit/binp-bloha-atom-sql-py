@@ -73,12 +73,14 @@ def get_data(cursor, kks_sql, width=10, precision=3,
              date_end=datetime.datetime.now().date(),
              time_begin=datetime.time(hour=0, minute=0, second=0, microsecond=0),
              time_end=datetime.time(hour=23, minute=59, second=59, microsecond=999),
+             condition="",
              callback=None):
 
     begin = datetime.datetime.combine(date_begin, time_begin).strftime("%Y-%m-%d %H:%M:%S+03")
     end = datetime.datetime.combine(date_end, time_end).strftime("%Y-%m-%d %H:%M:%S+03")
 
-    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}';""", width, precision, callback)
+
+    get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}'{condition};""", width, precision, callback)
 
 
 def parce_bit(bits, index, message_if_true="", message_if_false=""):
@@ -146,15 +148,16 @@ def main():
     check_connection(cursor)
     # get_all_channels(cursor)
     # get_types(cursor)
-    get_paramerus_status(cursor)
+    # get_paramerus_status(cursor)
 
-    get_data(cursor, kks_to_sql("LVC30GW11_XG01"), 12, 0,
+    get_data(cursor, kks_to_sql("CLD10GW05_XQ01"), 16, 12,
     # get_data(cursor, "DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
-    #          date_begin=datetime.date(year=2026, month=3, day=22),
-    #          date_end=datetime.date(year=2026, month=3, day=22),
-    #          time_begin=datetime.time(hour=14, minute=15, second=00, microsecond=0),
-    #          time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
-    #           callback=parce_paramerus_status,
+             date_begin=datetime.date(year=2026, month=3, day=19),
+             date_end=datetime.date(year=2026, month=3, day=22),
+             # time_begin=datetime.time(hour=14, minute=5, second=00, microsecond=0),
+             # time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
+             # callback=parce_paramerus_status,
+             # condition=' AND "VAL" >= 0'
              )
 #####################################################
 #         get_values(cursor, f"""
