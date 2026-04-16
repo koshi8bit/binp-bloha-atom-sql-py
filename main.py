@@ -128,7 +128,7 @@ def get_paramerus_status(cursor):
     get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 0,
              # date_begin=datetime.date(year=2026, month=3, day=23),
              # date_end=datetime.date(year=2026, month=3, day=22),
-             # time_begin=datetime.time(hour=18, minute=34, second=00, microsecond=0),
+             time_begin=datetime.time(hour=13, minute=24, second=00, microsecond=0),
              # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
              callback=parce_paramerus_status,
              )
@@ -148,17 +148,17 @@ def main():
     check_connection(cursor)
     # get_all_channels(cursor)
     # get_types(cursor)
-    # get_paramerus_status(cursor)
+    get_paramerus_status(cursor)
 
-    get_data(cursor, kks_to_sql("CLD10GW05_XQ01"), 16, 12,
-    # get_data(cursor, "DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
-             date_begin=datetime.date(year=2026, month=3, day=19),
-             date_end=datetime.date(year=2026, month=3, day=22),
+    # get_data(cursor, kks_to_sql("CLD10GW05_XQ01"), 16, 12,
+    # # get_data(cursor, "DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
+    #          date_begin=datetime.date(year=2026, month=3, day=19),
+    #          date_end=datetime.date(year=2026, month=3, day=22),
              # time_begin=datetime.time(hour=14, minute=5, second=00, microsecond=0),
              # time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
              # callback=parce_paramerus_status,
              # condition=' AND "VAL" >= 0'
-             )
+             # )
 #####################################################
 #         get_values(cursor, f"""
 # SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_1_HVC20CE01_XQ01" WHERE "TM">'2026-03-21 14:30:40+03' AND "TM"<'2026-03-21 23:59:59+03' AND "VAL">2 AND "VAL"<3
