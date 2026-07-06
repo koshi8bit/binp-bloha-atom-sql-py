@@ -2,11 +2,12 @@ import psycopg2
 import datetime
 import pyperclip
 
+
 class DB:
-    def __init__(self, ip: str):
+    def __init__(self, ip: str, database: str):
         self.connection = psycopg2.connect(
             host=ip,
-            database="ArchRNF",
+            database=database,
             user="binp",
             password="binp",
             port="5432"
@@ -63,7 +64,6 @@ class DB:
             str_to_clipboard = str_to_clipboard + tmp_str + "\n"
             print(tmp_str)
         pyperclip.copy(str_to_clipboard)
-
 
     def run_test(self, query):
         print("\n")

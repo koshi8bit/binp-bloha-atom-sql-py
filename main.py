@@ -65,7 +65,7 @@ def get_types(db):
 
 
 def main():
-    db = DB("192.168.1.2")
+    db = DB("192.168.1.2", "ArchRNF")
     # db.get_all_channels()
     # get_types(db)
     # get_paramerus_status(db)
