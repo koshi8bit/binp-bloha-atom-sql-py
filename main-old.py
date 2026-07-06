@@ -1,7 +1,8 @@
+import psycopg2
 import datetime
 import pyperclip
+from psycopg2._psycopg import cursor
 
-from DB import DB
 from kks import kks_to_sql
 
 def get_all_channels(cursor):
