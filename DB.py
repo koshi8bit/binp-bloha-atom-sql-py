@@ -65,16 +65,6 @@ class DB:
         pyperclip.copy(str_to_clipboard)
 
 
-##########################
-    def get_all_channels(self):
-        self.cursor.execute("""
-                SELECT table_name
-                FROM information_schema.tables
-                WHERE table_name LIKE 'DBAVl_archIEC104%';
-            """)
-        for row in self.cursor:
-            print(row[0])
-
     def run_test(self, query):
         print("\n")
         print(query)
@@ -88,3 +78,16 @@ class DB:
 
         for row in self.cursor:
             print(row)
+
+##########################
+
+    def get_all_channels(self):
+        self.cursor.execute("""
+                SELECT table_name
+                FROM information_schema.tables
+                WHERE table_name LIKE 'DBAVl_archIEC104%';
+            """)
+        for row in self.cursor:
+            print(row[0])
+
+

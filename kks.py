@@ -1,3 +1,27 @@
+from enum import Enum
+
+
+class Channels(Enum):
+    BEAM_ENERGY = ("", "Энергия")
+    BEAM_CURRENT_LI = ("JKA42CE01_XQ01", "Ток Li")
+    BEAM_CURRENT_PP = ("", "Ток ПП")
+
+    ELV_U = ("ELR30CE01_XQ01", "ЭЛВ/Напряжение")
+    ELV_I = ("ELR30CE02_XQ01", "ЭЛВ/Ток")
+    ELV_1_SEC_U = ("ELR30CE03_XQ01", "ЭЛВ/Напряжение 1ой секции")
+
+    @property
+    def kks(self):
+        return self.value[0]
+
+    @property
+    def kks_full(self):
+        return kks_to_sql(self.value[0])
+
+    @property
+    def desc(self):
+        return self.value[1]
+
 def kks_to_sql(kks: str) -> str:
     items = items_from_sql.strip().splitlines()
     matches = [s for s in items if kks in s]
@@ -11,6 +35,7 @@ def kks_to_sql(kks: str) -> str:
         )
 
     return matches[0]
+
 
 items_from_sql = """
 DBAVl_archIEC104_1_CPB22CE900_XQ01

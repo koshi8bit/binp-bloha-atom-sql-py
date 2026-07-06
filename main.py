@@ -1,7 +1,7 @@
 import datetime
 
 from DB import DB
-from kks import kks_to_sql
+from kks import Channels, kks_to_sql
 
 
 def parce_bit(bits, index, message_if_true="", message_if_false=""):
@@ -18,12 +18,13 @@ def parce_bit(bits, index, message_if_true="", message_if_false=""):
 
 def get_paramerus_status(db):
     db.get_data(kks_to_sql("LVC60CE01_XQ01"), 12, 0,
-             # date_begin=datetime.date(year=2026, month=3, day=23),
-             # date_end=datetime.date(year=2026, month=3, day=22),
-             time_begin=datetime.time(hour=13, minute=24, second=00, microsecond=0),
-             # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
-             callback=parce_paramerus_status,
-             )
+                # date_begin=datetime.date(year=2026, month=3, day=23),
+                # date_end=datetime.date(year=2026, month=3, day=22),
+                time_begin=datetime.time(hour=13, minute=24, second=00, microsecond=0),
+                # time_end = datetime.time(hour=18, minute=36, second=00, microsecond=0),
+                callback=parce_paramerus_status,
+                )
+
 
 def parce_paramerus_status(val):
     if not 65535 > val > 0:
@@ -69,8 +70,9 @@ def main():
     # get_types(db)
     # get_paramerus_status(db)
 
-    db.get_data(kks_to_sql("MAJ22CP01_XQ01"), 16, 12,
-                # get_data(cursor, "DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
+    db.get_data(Channels.ELV_U.kks_full, 12, 0,
+    # db.get_data(kks_to_sql("MAJ22CP01_XQ01"), 16, 12,
+    # db.get_data("DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
                 #          date_begin=datetime.date(year=2026, month=3, day=19),
                 #          date_end=datetime.date(year=2026, month=3, day=22),
                 time_begin=datetime.time(hour=16, minute=5, second=00, microsecond=0),
@@ -79,7 +81,7 @@ def main():
                 # condition=' AND "VAL" >= 0'
                 )
     #####################################################
-    #         get_values(cursor, f"""
+    #         db.get_values(cursor, f"""
     # SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_1_HVC20CE01_XQ01" WHERE "TM">'2026-03-21 14:30:40+03' AND "TM"<'2026-03-21 23:59:59+03' AND "VAL">2 AND "VAL"<3
     # """)
     ######################################################
