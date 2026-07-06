@@ -5,6 +5,7 @@ from psycopg2._psycopg import cursor
 
 from kks import kks_to_sql
 
+# OK
 def get_all_channels(cursor):
     cursor.execute("""
             SELECT table_name
@@ -21,6 +22,7 @@ def check_connection(cursor):
     result = cursor.fetchall()
     print("Server version:", result)
 
+# OK
 def get_types(cursor):
     run_test(cursor, """
     SELECT column_name, data_type
@@ -28,6 +30,7 @@ def get_types(cursor):
     WHERE table_name = 'DBAVl_archIEC104_6_JKA20CE01_XQ01'     
 """)
 
+# OK
 def run_test(cursor, query):
     print("\n")
     print(query)
@@ -43,6 +46,7 @@ def run_test(cursor, query):
         print(row)
 
 
+#OK
 def get_values(cursor, query, width=10, precision=3, callback=None):
     print("\n")
     print(query)
@@ -68,7 +72,7 @@ def get_values(cursor, query, width=10, precision=3, callback=None):
     pyperclip.copy(str_to_clipboard)
 
 
-
+# OK
 def get_data(cursor, kks_sql, width=10, precision=3,
              date_begin=datetime.datetime.now().date(),
              date_end=datetime.datetime.now().date(),
@@ -84,6 +88,7 @@ def get_data(cursor, kks_sql, width=10, precision=3,
     get_values(cursor, f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}'{condition};""", width, precision, callback)
 
 
+# OK
 def parce_bit(bits, index, message_if_true="", message_if_false=""):
     if not len(bits) > index:
         return ""
@@ -96,6 +101,7 @@ def parce_bit(bits, index, message_if_true="", message_if_false=""):
     return message_if_true if bits[index] else message_if_false
 
 
+# OK
 def parce_paramerus_status(val):
     if not 65535 > val > 0:
         return "ERR value"
@@ -125,6 +131,7 @@ def parce_paramerus_status(val):
 
     return result
 
+# OK
 def get_paramerus_status(cursor):
     get_data(cursor, kks_to_sql("LVC60CE01_XQ01"), 12, 0,
              # date_begin=datetime.date(year=2026, month=3, day=23),
