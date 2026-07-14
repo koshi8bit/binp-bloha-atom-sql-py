@@ -37,8 +37,7 @@ class DB:
         begin = datetime.datetime.combine(date_begin, time_begin).strftime("%Y-%m-%d %H:%M:%S+03")
         end = datetime.datetime.combine(date_end, time_end).strftime("%Y-%m-%d %H:%M:%S+03")
 
-        self.get_values(self.cursor,
-                   f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}'{condition};""",
+        self.get_values(f"""SELECT \"TM\",\"TMU\",\"VAL\",\"ALARM\" FROM "{kks_sql}" WHERE "TM">'{begin}' AND "TM"<'{end}'{condition};""",
                    width, precision, callback)
 
     def get_values(self, query, width=10, precision=3, callback=None):
