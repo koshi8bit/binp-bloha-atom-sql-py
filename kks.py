@@ -10,6 +10,8 @@ class Channels(Enum):
     ELV_I = ("ELR30CE02_XQ01", "ЭЛВ/Ток")
     ELV_1_SEC_U = ("ELR30CE03_XQ01", "ЭЛВ/Напряжение 1ой секции")
 
+    RADIATION_PATIENT = ("CLD10GW06_XQ01", "Радиация/Пациент")
+
     @property
     def kks(self):
         return self.value[0]
