@@ -10,7 +10,8 @@ class Channels(Enum):
     ELV_I = ("ELR30CE02_XQ01", "ЭЛВ/Ток")
     ELV_1_SEC_U = ("ELR30CE03_XQ01", "ЭЛВ/Напряжение 1ой секции")
 
-    RADIATION_PATIENT = ("CLD10GW06_XQ01", "Радиация/Пациент")
+    RADIATION_PATIENT_NEUTRONS = ("CLD10GW06_XQ01", "Радиация/Пациент/Нейтроны")
+    RADIATION_PATIENT_GAMMA = ("CLD10GW05_XQ01", "Радиация/Пациент/Гамма")
 
     @property
     def kks(self):
@@ -23,6 +24,7 @@ class Channels(Enum):
     @property
     def desc(self):
         return self.value[1]
+
 
 def kks_to_sql(kks: str) -> str:
     items = items_from_sql.strip().splitlines()

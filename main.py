@@ -64,33 +64,81 @@ def get_types(db):
     """)
 
 
+def get_some(db, kks_full, date):
+    if True:
+        db.get_values(f"""
+            SELECT "TM","TMU","VAL","ALARM" FROM "{kks_full}" WHERE "TM">'{date} 08:30:40+03' AND "TM"<'{date} 23:59:59+03'
+        """, width=16, precision=12)
+
+    if True:
+        db.run_test(f"""
+            SELECT MAX("VAL")
+            FROM "{kks_full}"
+            WHERE "TM">'{date} 08:30:40+03' AND "TM"<'{date} 23:59:59+03'
+        """)
+
+    if False:
+        db.run_test(f"""
+            SELECT "TM", "TMU", "VAL"
+            FROM "{kks_full}"
+            WHERE "VAL" = (SELECT MAX("VAL") FROM "{kks_full}") AND
+            "TM">'{date} 08:30:40+03' AND "TM"<'{date} 23:59:59+03';
+        """)
+
+
 def main():
     db = DB("192.168.1.2", "ArchRNF")
     # db.get_all_channels()
     # get_types(db)
     # get_paramerus_status(db)
 
-    db.get_data(Channels.ELV_U.kks_full, 12, 0,
-    # db.get_data(kks_to_sql("MAJ22CP01_XQ01"), 16, 12,
+    # db.get_data(Channels.ELV_U.kks_full, 12, 0,
+    # db.get_data(kks_to_sql("CLD10GW06_XQ01"), 16, 12,
     # db.get_data("DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
-                #          date_begin=datetime.date(year=2026, month=3, day=19),
-                #          date_end=datetime.date(year=2026, month=3, day=22),
-                time_begin=datetime.time(hour=16, minute=5, second=00, microsecond=0),
-                # time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
-                # callback=parce_paramerus_status,
-                # condition=' AND "VAL" >= 0'
-                )
+    # date_begin=datetime.date(year=2025, month=6, day=1),
+    # date_end=datetime.date(year=2026, month=3, day=22),
+    # time_begin=datetime.time(hour=16, minute=5, second=00, microsecond=0),
+    # time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
+    # callback=parce_paramerus_status,
+    # condition=' AND "VAL" >= 0'
+    #            )
     #####################################################
-    #         db.get_values(cursor, f"""
-    # SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_1_HVC20CE01_XQ01" WHERE "TM">'2026-03-21 14:30:40+03' AND "TM"<'2026-03-21 23:59:59+03' AND "VAL">2 AND "VAL"<3
-    # """)
-    ######################################################
 
-    # except Exception as error:
-    #     print(error)
-    #
-    # finally:
-    #    del db
+    get_some(db, "DBAVl_archIEC104_6_CLD10GW05_XQ01", "2026-06-01")
+
+
+#    db.run_test("""
+#        SELECT MAX("VAL")
+#        FROM "DBAVl_archIEC104_6_CLD10GW05_XQ01"
+#       WHERE "TM">'2025-06-01 08:30:40+03' AND "TM"<'2027-06-01 23:59:59+03'
+#    """)
+
+#    db.run_test("""
+#        SELECT MAX("VAL")
+#        FROM "DBAVl_archIEC104_6_CLD10GW06_XQ01"
+#        WHERE "TM">'2025-06-01 08:30:40+03' AND "TM"<'2027-06-01 23:59:59+03'
+#    """)
+
+
+#    db.get_values(f"""
+#    SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_6_CLD10GW05_XQ01" WHERE "TM">'2026-06-01 08:30:40+03' AND "TM"<'2026-06-01 23:59:59+03'
+#    """, width=16, precision=12)
+
+#    db.get_values(f"""
+#    SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_6_CLD10GW06_XQ01" WHERE "TM">'2026-06-01 08:30:40+03' AND "TM"<'2026-06-01 23:59:59+03'
+#    """, width=16, precision=12)
+
+
+#    db.get_values(f"""
+#    SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_6_CLD10GW06_XQ01" WHERE "TM">'2026-06-01 08:30:40+03' AND "TM"<'2026-06-01 23:59:59+03'
+#    """, width=16, precision=12)
+######################################################
+
+# except Exception as error:
+#     print(error)
+#
+# finally:
+#    del db
 
 
 main()
