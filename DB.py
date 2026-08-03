@@ -59,7 +59,13 @@ class DB:
             alarm = " (!)" if row[3]==1.0 else ""
             callback_str = f"     {callback(val)}" if callback else ""
             f = 'f' if -threshold < val < threshold else 'e'
-            tmp_str = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]} {val:{width}.{precision}{f}}{alarm} {callback_str}"
+            tmp_date = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]}"
+            tmp_val = f"{val:{width}.{precision}{f}}".replace(".", ",")
+            tmp_alarm = f"{alarm}"
+            tmp_str = f"{tmp_date} {tmp_val}{tmp_alarm} {callback_str}"
+            # tmp_str = f"{time_dt.strftime("%Y-%m-%d  %H:%M:%S.%f")[:-3]} {val:{width}.{precision}{f}}{alarm} {callback_str}"
+
+            # self.cursor.execute(tmp_str)
             str_to_clipboard = str_to_clipboard + tmp_str + "\n"
             print(tmp_str)
         pyperclip.copy(str_to_clipboard)

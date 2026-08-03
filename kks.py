@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Channels(Enum):
-    BEAM_ENERGY = ("", "Энергия")
+    BEAM_ENERGY = ("ELR30CE11_XQ01", "Энергия")
     BEAM_CURRENT_LI = ("JKA42CE01_XQ01", "Ток Li")
     BEAM_CURRENT_PP = ("JKA50CE01_XQ01", "Ток ПП")
 

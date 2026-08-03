@@ -87,24 +87,24 @@ def get_some(db, kks_full, date):
 
 
 def main():
-    db = DB("192.168.1.2", "ArchRNF")
+    db = DB("192.168.1.1", "ArchRNF")
     # db.get_all_channels()
     # get_types(db)
     # get_paramerus_status(db)
 
-    # db.get_data(Channels.ELV_U.kks_full, 12, 0,
-    # db.get_data(kks_to_sql("CLD10GW06_XQ01"), 16, 12,
+    # db.get_data(Channels.ELV_U.kks_full, 12, 5,
+    db.get_data(kks_to_sql("MAG70CE01_XQ01"), 16, 6,
     # db.get_data("DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
-    # date_begin=datetime.date(year=2025, month=6, day=1),
-    # date_end=datetime.date(year=2026, month=3, day=22),
-    # time_begin=datetime.time(hour=16, minute=5, second=00, microsecond=0),
-    # time_end = datetime.time(hour=14, minute=36, second=00, microsecond=0),
-    # callback=parce_paramerus_status,
-    # condition=' AND "VAL" >= 0'
-    #            )
+         date_begin=datetime.date(year=2026, month=7, day=29),
+         date_end=datetime.date(year=2026, month=7, day=29),
+         time_begin=datetime.time(hour=18, minute=19, second=30, microsecond=0),
+         time_end = datetime.time(hour=18, minute=23, second=00, microsecond=0),
+    #     callback=parce_paramerus_status,
+    #     condition=' AND "VAL" >= 0'
+    )
     #####################################################
 
-    get_some(db, "DBAVl_archIEC104_6_CLD10GW05_XQ01", "2026-06-01")
+    # get_some(db, "DBAVl_archIEC104_6_CLD10GW05_XQ01", "2026-06-01")
 
 
 #    db.run_test("""
