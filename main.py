@@ -87,21 +87,21 @@ def get_some(db, kks_full, date):
 
 
 def main():
-    db = DB("192.168.1.1", "ArchRNF")
+    db = DB("192.168.1.2", "ArchRNF")
     # db.get_all_channels()
     # get_types(db)
     # get_paramerus_status(db)
 
     # db.get_data(Channels.ELV_U.kks_full, 12, 5,
-    db.get_data(kks_to_sql("MAG70CE01_XQ01"), 16, 6,
-    # db.get_data("DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
-         date_begin=datetime.date(year=2026, month=7, day=29),
-         date_end=datetime.date(year=2026, month=7, day=29),
-         time_begin=datetime.time(hour=18, minute=19, second=30, microsecond=0),
-         time_end = datetime.time(hour=18, minute=23, second=00, microsecond=0),
-    #     callback=parce_paramerus_status,
-    #     condition=' AND "VAL" >= 0'
-    )
+    # db.get_data(kks_to_sql("MAG70CE01_XQ01"), 16, 6,
+    # # db.get_data("DBAVl_archIEC104_7_BAA11GW01_XB01", 12, 0,
+    #      date_begin=datetime.date(year=2026, month=7, day=29),
+    #      date_end=datetime.date(year=2026, month=7, day=29),
+    #      time_begin=datetime.time(hour=18, minute=19, second=30, microsecond=0),
+    #      time_end = datetime.time(hour=18, minute=23, second=00, microsecond=0),
+    # #     callback=parce_paramerus_status,
+    # #     condition=' AND "VAL" >= 0'
+    # )
     #####################################################
 
     # get_some(db, "DBAVl_archIEC104_6_CLD10GW05_XQ01", "2026-06-01")
@@ -113,25 +113,9 @@ def main():
 #       WHERE "TM">'2025-06-01 08:30:40+03' AND "TM"<'2027-06-01 23:59:59+03'
 #    """)
 
-#    db.run_test("""
-#        SELECT MAX("VAL")
-#        FROM "DBAVl_archIEC104_6_CLD10GW06_XQ01"
-#        WHERE "TM">'2025-06-01 08:30:40+03' AND "TM"<'2027-06-01 23:59:59+03'
-#    """)
-
-
-#    db.get_values(f"""
-#    SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_6_CLD10GW05_XQ01" WHERE "TM">'2026-06-01 08:30:40+03' AND "TM"<'2026-06-01 23:59:59+03'
-#    """, width=16, precision=12)
-
-#    db.get_values(f"""
-#    SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_6_CLD10GW06_XQ01" WHERE "TM">'2026-06-01 08:30:40+03' AND "TM"<'2026-06-01 23:59:59+03'
-#    """, width=16, precision=12)
-
-
-#    db.get_values(f"""
-#    SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_6_CLD10GW06_XQ01" WHERE "TM">'2026-06-01 08:30:40+03' AND "TM"<'2026-06-01 23:59:59+03'
-#    """, width=16, precision=12)
+    db.run_test("""
+SELECT "TM","TMU","VAL","ALARM" FROM "DBAVl_archIEC104_5_ELR30CE01_XQ01" WHERE "TM">'2026-09-12T12:59:00+03' AND "TM"<'2026-09-12T13:01:00+03';
+   """)
 ######################################################
 
 # except Exception as error:
