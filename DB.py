@@ -84,6 +84,19 @@ class DB:
         for row in self.cursor:
             print(row)
 
+    def run_test_short(self, query):
+        if query == "\n\n":
+            print("empty query")
+            return
+
+        self.cursor.execute(query)
+
+        for row in self.cursor:
+            print(row)
+
+    def exec(self, query):
+        self.cursor.execute(query)
+
 ##########################
 
     def get_all_channels(self):
@@ -94,5 +107,18 @@ class DB:
             """)
         for row in self.cursor:
             print(row[0])
+
+    def get_table_columns(self, table_name):
+        self.cursor.execute(f"""
+                SELECT column_name, data_type
+                FROM information_schema.columns
+                WHERE table_schema = 'public'
+                  AND table_name = '{table_name}' 
+                ORDER BY ordinal_position;
+            """)
+        for row in self.cursor:
+            print(row[0])
+
+
 
 

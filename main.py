@@ -88,7 +88,7 @@ def get_some(db, kks_full, date):
 
 def main():
     db = DB("10.11.5.91", "ArchRNF")
-    db.get_all_channels()
+    # db.get_all_channels()
     # get_types(db)
     # get_paramerus_status(db)
 
