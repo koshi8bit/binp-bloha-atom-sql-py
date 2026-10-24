@@ -5,8 +5,8 @@ def main():
     # db.get_table_columns("IEC104Prm_1")
     setup_functions(db)
 
-    find_by_kks(db, "MAG12CE01_XQ01")
-    find_by_addr(db, 6839)
+    find_by_kks(db, "MAJ22CP01_XQ01")
+    find_by_addr(db, 5107)
 
 
 

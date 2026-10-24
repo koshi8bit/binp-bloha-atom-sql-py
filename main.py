@@ -92,9 +92,9 @@ def main():
     # get_types(db)
     # get_paramerus_status(db)
 
-    # db.get_data(Channels.RADIATION_PATIENT_GAMMA .kks_full, 12, 5,
+    db.get_data(Channels.RADIATION_PATIENT_GAMMA .kks_full, 12, 5,
     # db.get_data(kks_to_sql("CPB22CE900_XQ01"), 16, 6,
-    db.get_data("DBAVl_archIEC104_7_CPB52CE900_XG01", 12, 0,
+    # db.get_data("DBAVl_archIEC104_7_CPB52CE900_XG01", 12, 0,
     #      date_begin=datetime.date(year=2026, month=7, day=29),
     #      date_end=datetime.date(year=2026, month=7, day=29),
     #      time_begin=datetime.time(hour=18, minute=19, second=30, microsecond=0),
